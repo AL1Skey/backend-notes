@@ -28,6 +28,24 @@ export default class Notes {
     }
     return result.notes;
   }
+  static async getAllNotes() {
+    const result = await this.collection().find(
+      { notes: { $exists: true } },
+      { projection: { notes: 1 } }
+    ).toArray();
+  
+    const allNotes = result.flatMap(user => {
+      const data = user.notes.map(note => {
+        const theNote = note
+        theNote.userId = user._id;
+        return theNote;
+      });
+      console.log(data, 'data');
+      return data;
+    });
+    return allNotes;
+  
+  }
 
   static async getNote(userId, noteId) {
     const result = await this.collection().findOne(
